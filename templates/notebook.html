@@ -12,35 +12,53 @@
         <header class="topbar">
             <a class="brand" href="/" aria-label="Jupyter Notebook home"><span class="brand-mark" aria-hidden="true"></span><span>Jupyter</span></a>
             <div class="doc-title"><span id="notebook-title">Untitled</span><span class="checkpoint">Last Checkpoint: now</span></div>
-            <span class="python-mark" aria-label="Python 3">Py</span>
+            <div class="topbar-actions">
+                <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false" title="Switch theme"><span class="theme-symbol" aria-hidden="true"></span></button>
+                <span class="python-mark" >
+  <img src="https://s3.dualstack.us-east-2.amazonaws.com/pythondotorg-assets/media/community/logos/python-logo-only.png"
+       >
+</span>
+            </div>
         </header>
 
         <nav class="menubar" aria-label="Notebook menus">
-            <button class="menu-item" id="add-button" type="button" title="Create a text-backed code cell">File</button>
-            <button class="menu-item" id="menu-copy-button" type="button" title="Copy all code">Edit</button>
-            <button class="menu-item theme-menu" id="theme-toggle" type="button" aria-label="Switch to dark theme" aria-pressed="false"><span>View</span><span class="theme-symbol" aria-hidden="true">☾</span><span class="theme-name">Dark</span></button>
-            <span class="menu-label">Kernel</span>
-            <a class="menu-item help-link" href="https://jupyter-notebook.readthedocs.io/" target="_blank" rel="noreferrer">Help</a>
+            <button class="menu-item" type="button">File</button>
+            <button class="menu-item" type="button">Edit</button>
+            <button class="menu-item" type="button">View</button>
+            <button class="menu-item" type="button">Run</button>
+            <button class="menu-item" type="button">Kernel</button>
+            <button class="menu-item" type="button">Settings</button>
+            <button class="menu-item" type="button">Help</button>
+            
         </nav>
 
         <div class="toolbar" role="toolbar" aria-label="Notebook toolbar">
             <div class="toolbar-actions">
-                <button class="tool-button" id="add-inline-button" type="button" title="Add code cell"><span aria-hidden="true">＋</span></button>
-                <button class="tool-button" id="copy-all-button" type="button" title="Copy all code" disabled><span aria-hidden="true">▣</span></button>
-                <button class="tool-button" id="refresh-button" type="button" title="Refresh text files"><span aria-hidden="true">↻</span></button>
+                <button class="tool-button" type="button" title="Save notebook" aria-label="Save notebook"><span aria-hidden="true">▣</span></button>
+                <button class="tool-button" id="add-inline-button" type="button" title="Add code cell" aria-label="Add code cell"><span aria-hidden="true">＋</span></button>
+                <button class="tool-button" type="button" title="Cut cells" aria-label="Cut cells"><span aria-hidden="true">✂</span></button>
+                <button class="tool-button" id="copy-all-button" type="button" title="Copy all code" aria-label="Copy all code" disabled><span aria-hidden="true">▢</span></button>
+                <button class="tool-button" type="button" title="Paste cells" aria-label="Paste cells"><span aria-hidden="true">▤</span></button>
+                <button class="tool-button" type="button" title="Run cell" aria-label="Run cell"><span aria-hidden="true">▶</span></button>
+                <button class="tool-button" type="button" title="Interrupt kernel" aria-label="Interrupt kernel"><span aria-hidden="true">■</span></button>
+                <button class="tool-button" id="refresh-button" type="button" title="Restart kernel / refresh notebook" aria-label="Refresh notebook"><span aria-hidden="true">↻</span></button>
+                <button class="tool-button" type="button" title="Restart kernel and run all cells" aria-label="Restart and run all"><span aria-hidden="true">»</span></button>
             </div>
             <span class="toolbar-divider"></span>
-            <span class="cell-total" id="cell-count">0 cells</span>
+            <select class="cell-type-picker" aria-label="Cell type"><option>Code</option><option>Markdown</option><option>Raw</option></select>
             <span class="toolbar-spacer"></span>
-            <span class="kernel-status"><span class="kernel-dot"></span><span>Python 3 (read only)</span></span>
-            <span class="connection-status" id="connection-status">Connected</span>
+            <button class="toolbar-link" type="button" title="Open JupyterLab">JupyterLab <span aria-hidden="true">↗</span></button>
+            <button class="tool-button settings-button" type="button" title="Settings" aria-label="Settings"><span aria-hidden="true">⚙</span></button>
+            <select class="notebook-picker" id="notebook-picker" aria-label="Select notebook"></select>
+            <span class="kernel-dot" aria-hidden="true"></span>
+            <span class="cell-total sr-only" id="cell-count">0 cells</span>
+            <span class="sr-only" id="connection-status">Connected</span>
         </div>
 
         <main class="notebook-canvas" aria-label="Code notebook">
             <div class="notebook-sheet">
                 <div class="cells" id="cells" aria-live="polite"></div>
-                <section class="empty-state" id="empty-state" hidden><div class="empty-mark" aria-hidden="true">[ ]</div><h1>Untitled</h1><p>This notebook is empty.</p><button class="empty-add-button" id="empty-add-button" type="button">Add code cell</button></section>
-                <div class="add-cell-row"><span></span><button id="add-cell-bottom" type="button" title="Add code cell">＋</button><span></span></div>
+                <section class="empty-state" id="empty-state" hidden><div class="empty-mark" aria-hidden="true">[ ]</div><h1>This notebook is empty.</h1></section>
             </div>
         </main>
     </div>

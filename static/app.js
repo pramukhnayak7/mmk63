@@ -2,7 +2,9 @@ const cellsNode = document.querySelector('#cells');
 const dialog = document.querySelector('#create-dialog');
 const toast = document.querySelector('#toast');
 const themeToggle = document.querySelector('#theme-toggle');
+const notebookPicker = document.querySelector('#notebook-picker');
 let cells = [];
+let selectedNotebook = '';
 let toastTimer;
 
 function setTheme(theme) {
@@ -10,8 +12,7 @@ function setTheme(theme) {
     document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
     themeToggle.setAttribute('aria-pressed', String(isDark));
     themeToggle.setAttribute('aria-label', `Switch to ${isDark ? 'light' : 'dark'} theme`);
-    themeToggle.querySelector('.theme-symbol').textContent = isDark ? '☀' : '☾';
-    themeToggle.querySelector('.theme-name').textContent = isDark ? 'Light' : 'Dark';
+    themeToggle.querySelector('.theme-symbol').textContent = isDark ? '' : '';
     document.querySelector('#browser-theme-color').content = isDark ? '#424242' : '#eeeeee';
     localStorage.setItem('notebook-theme', isDark ? 'dark' : 'light');
 }
@@ -60,13 +61,13 @@ function renderCells() {
         label.className = 'cell-label';
         const prompt = document.createElement('span');
         prompt.className = 'prompt';
-        prompt.textContent = 'In [ ]:';
+        prompt.textContent = cell.cell_type === 'code' ? 'In [ ]:' : '';
         const filename = document.createElement('span');
         filename.className = 'cell-filename';
         filename.textContent = cell.filename;
         const type = document.createElement('span');
         type.className = 'cell-type';
-        type.textContent = 'PYTHON';
+        type.textContent = cell.cell_type === 'markdown' ? 'MARKDOWN' : 'PYTHON';
         label.append(prompt, filename, type);
         const copyButton = document.createElement('button');
         copyButton.className = 'copy-button';
@@ -81,20 +82,28 @@ function renderCells() {
         const code = document.createElement('pre');
         code.className = 'code-content';
         const codeText = document.createElement('code');
-        codeText.textContent = cell.source.join('');
+        codeText.textContent = cell.source;
         code.append(codeText);
         article.append(header, code);
         cellsNode.append(article);
     }
 }
 
-async function loadNotebook() {
+async function loadNotebook(name = selectedNotebook) {
     document.querySelector('#connection-status').textContent = 'Connecting';
     try {
-        const response = await fetch('/api/notebook', { cache: 'no-store' });
-        if (!response.ok) throw new Error('Could not load code files.');
+        const response = await fetch(`/api/notebook?name=${encodeURIComponent(name)}`, { cache: 'no-store' });
+        if (!response.ok) throw new Error('Could not load this notebook.');
         const notebook = await response.json();
-        cells = notebook.cells.map(cell => ({ filename: cell.metadata.filename, source: cell.source }));
+        selectedNotebook = name;
+        cells = notebook.cells.map((cell, index) => ({
+            cell_type: cell.cell_type || 'code',
+            filename: cell.metadata?.filename || `Cell ${index + 1}`,
+            source: Array.isArray(cell.source) ? cell.source.join('') : (cell.source || ''),
+        }));
+        const title = (notebook.name || name).replace(/\.ipynb$/i, '');
+        document.querySelector('#notebook-title').textContent = title;
+        document.title = `${title} - Jupyter Notebook`;
         renderCells();
         document.querySelector('#connection-status').textContent = 'Connected';
     } catch (error) {
@@ -103,24 +112,51 @@ async function loadNotebook() {
     }
 }
 
+async function loadNotebookList() {
+    const response = await fetch('/api/notebooks', { cache: 'no-store' });
+    if (!response.ok) throw new Error('Could not load notebooks.');
+    const notebooks = await response.json();
+    notebookPicker.replaceChildren();
+    for (const notebook of notebooks) {
+        const option = document.createElement('option');
+        option.value = notebook.value || notebook.name;
+        option.textContent = notebook.name;
+        notebookPicker.append(option);
+    }
+    if (!notebooks.length) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = 'No notebooks found';
+        notebookPicker.append(option);
+        notebookPicker.disabled = true;
+        return;
+    }
+    selectedNotebook = notebooks.some(notebook => (notebook.value || notebook.name) === selectedNotebook)
+        ? selectedNotebook
+        : (notebooks[0].value || notebooks[0].name);
+    notebookPicker.value = selectedNotebook;
+    await loadNotebook(selectedNotebook);
+}
+
 function openDialog() {
     document.querySelector('#form-error').textContent = '';
     dialog.showModal();
     document.querySelector('#filename').focus();
 }
 
-document.querySelectorAll('#add-button, #empty-add-button, #add-inline-button, #add-cell-bottom').forEach(button => button.addEventListener('click', openDialog));
+document.querySelector('#add-inline-button').addEventListener('click', openDialog);
 document.querySelectorAll('#close-dialog, #cancel-dialog').forEach(button => button.addEventListener('click', () => dialog.close()));
-document.querySelector('#refresh-button').addEventListener('click', loadNotebook);
+document.querySelector('#refresh-button').addEventListener('click', () => loadNotebook());
+notebookPicker.addEventListener('change', () => loadNotebook(notebookPicker.value));
 async function copyAll() {
     if (!cells.length) {
         showToast('No code to copy');
         return;
     }
-    await copyText(cells.map(cell => `# ${cell.filename}\n${cell.source.join('')}`).join('\n\n'));
-    showToast('All snippets copied');
+    await copyText(cells.map(cell => cell.source).join('\n\n'));
+    showToast('Notebook copied');
 }
-document.querySelectorAll('#copy-all-button, #menu-copy-button').forEach(button => button.addEventListener('click', copyAll));
+document.querySelector('#copy-all-button').addEventListener('click', copyAll);
 document.querySelector('#create-form').addEventListener('submit', async event => {
     event.preventDefault();
     const errorNode = document.querySelector('#form-error');
@@ -139,8 +175,11 @@ document.querySelector('#create-form').addEventListener('submit', async event =>
     }
     dialog.close();
     event.currentTarget.reset();
-    await loadNotebook();
+    await loadNotebookList();
     showToast(`${result.name} saved`);
 });
 
-loadNotebook();
+loadNotebookList().catch(error => {
+    document.querySelector('#connection-status').textContent = 'Connection error';
+    showToast(error.message);
+});

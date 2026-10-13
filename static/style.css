@@ -180,7 +180,6 @@ html[data-theme="dark"] .notebook-toolbar,
 html[data-theme="dark"] .notebook-heading,
 html[data-theme="dark"] .cell-head,
 html[data-theme="dark"] .code-cell { background: #212121; border-color: #424242; }
-html[data-theme="dark"] .kernel-dot { border-color: #bdbdbd; }
 html[data-theme="dark"] .toolbar-divider { border-color: #616161; }
 html[data-theme="dark"] .cell-filename { color: #bdbdbd; }
 html[data-theme="dark"] .code-content { color: #e0e0e0; background: #212121; border-color: #616161; }
@@ -206,14 +205,22 @@ body { min-height: 100vh; background: #eee; color: rgba(0, 0, 0, .87); font-fami
 .brand-mark::after { right: -3px; bottom: 1px; }
 .doc-title { display: flex; align-items: baseline; gap: 9px; margin-left: 2px; color: #222; font-size: 17px; }
 .checkpoint { color: #666; font-size: 12px; }
-.python-mark { display: grid; width: 24px; height: 24px; margin-left: auto; place-items: center; color: #ffd343; background: #3776ab; border-radius: 5px; font: 700 11px var(--sans); }
-.menubar { height: 28px; flex: 0 0 28px; display: flex; align-items: stretch; gap: 0; padding: 0 max(16px, calc((100% - 1320px) / 2)); background: #fff; border-bottom: 1px solid #bdbdbd; }
-.menu-item, .menu-label { min-height: 27px; display: inline-flex; align-items: center; gap: 5px; padding: 0 9px; color: #222; background: transparent; border: 0; border-radius: 0; font-size: 13px; text-decoration: none; }
-.menu-item { cursor: pointer; }
-.menu-item:hover, .menu-item:focus-visible { background: #e8e8e8; outline: 0; }
-.menu-label { color: #444; }
-.theme-symbol { color: #555; font-size: 13px; }
-.theme-name { color: #555; font-size: 11px; }
+.python-mark {
+    display: grid;
+    width: 24px;
+    height: 24px;
+    margin-left: auto;
+    place-items: center;
+}
+
+.python-mark img {
+    display: block;
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+}.theme-toggle { width: 27px; height: 27px; display: grid; flex: 0 0 27px; margin-left: auto; place-items: center; padding: 0; color: #555; background: transparent; border: 1px solid #bdbdbd; border-radius: 50%; cursor: pointer; }
+.theme-toggle:hover, .theme-toggle:focus-visible { background: #eee; outline: 0; }
+.theme-symbol { font-size: 15px; line-height: 1; }
 .toolbar { height: 32px; flex: 0 0 32px; display: flex; align-items: center; gap: 8px; padding: 0 max(16px, calc((100% - 1320px) / 2)); background: #fff; border-bottom: 1px solid #bdbdbd; box-shadow: 0 1px 2px #00000012; }
 .toolbar-actions { display: flex; align-items: center; gap: 2px; }
 .tool-button { width: 25px; height: 25px; display: grid; place-items: center; padding: 0; color: #555; background: transparent; border: 0; border-radius: 2px; cursor: pointer; font-size: 16px; }
@@ -222,8 +229,8 @@ body { min-height: 100vh; background: #eee; color: rgba(0, 0, 0, .87); font-fami
 .toolbar-divider { width: 1px; height: 19px; margin: 0 3px; background: #ccc; }
 .cell-total, .connection-status { color: #555; font: 12px Arial, sans-serif; }
 .toolbar-spacer { flex: 1; }
-.kernel-status { display: flex; align-items: center; gap: 7px; color: #333; font-size: 12px; white-space: nowrap; }
-.kernel-dot { width: 14px; height: 14px; border: 1.5px solid #666; border-radius: 50%; }
+.notebook-picker-label { color: #555; font: 12px Arial, sans-serif; }
+.notebook-picker { max-width: min(260px, 34vw); height: 25px; padding: 0 23px 0 7px; color: #333; background: #fff; border: 1px solid #bdbdbd; border-radius: 2px; font: 12px Arial, sans-serif; }
 .connection-status { padding-left: 5px; }
 .notebook-canvas { flex: 1; min-height: calc(100vh - 106px); padding: 20px 18px 48px; background: #eee; }
 .notebook-sheet { width: min(100%, 1200px); min-height: 145px; margin: 0 auto; padding: 14px 10px 18px; background: #fff; border: 1px solid #ddd; box-shadow: 0 3px 7px #00000035; }
@@ -240,8 +247,6 @@ body { min-height: 100vh; background: #eee; color: rgba(0, 0, 0, .87); font-fami
 .empty-mark { margin-bottom: 14px; color: #307fc1; font: 14px 'DejaVu Sans Mono', monospace; }
 .empty-state h1 { margin: 0; color: #333; font-size: 18px; font-weight: 400; }
 .empty-state p { margin: 8px 0 14px; color: #666; font-size: 12px; }
-.empty-add-button { padding: 5px 9px; color: #333; background: #fff; border: 1px solid #bbb; border-radius: 2px; cursor: pointer; font-size: 12px; }
-.empty-add-button:hover { background: #eee; }
 .add-cell-row { grid-template-columns: 1fr 26px 1fr; gap: 6px; margin-top: 13px; }
 .add-cell-row > span { background: #e3e3e3; }
 .add-cell-row button { width: 24px; height: 24px; padding: 0; color: #1976d2; border: 1px solid transparent; font: 19px Arial, sans-serif; }
@@ -249,25 +254,21 @@ body { min-height: 100vh; background: #eee; color: rgba(0, 0, 0, .87); font-fami
 
 html[data-theme="dark"] body { color: rgba(255, 255, 255, .87); background: #424242; }
 html[data-theme="dark"] .topbar,
-html[data-theme="dark"] .menubar,
 html[data-theme="dark"] .toolbar { background: #212121; border-color: #424242; }
 html[data-theme="dark"] .brand,
 html[data-theme="dark"] .doc-title,
-html[data-theme="dark"] .menu-item,
-html[data-theme="dark"] .menu-label,
-html[data-theme="dark"] .kernel-status { color: rgba(255, 255, 255, .87); }
+html[data-theme="dark"] .notebook-picker-label { color: rgba(255, 255, 255, .87); }
 html[data-theme="dark"] .checkpoint,
-html[data-theme="dark"] .theme-symbol,
-html[data-theme="dark"] .theme-name,
 html[data-theme="dark"] .cell-total,
 html[data-theme="dark"] .connection-status { color: rgba(255, 255, 255, .6); }
-html[data-theme="dark"] .menu-item:hover,
-html[data-theme="dark"] .menu-item:focus-visible,
 html[data-theme="dark"] .tool-button:hover:not(:disabled) { background: #424242; }
+html[data-theme="dark"] .theme-toggle { color: rgba(255, 255, 255, .87); background: #212121; border-color: #616161; }
+html[data-theme="dark"] .theme-toggle:hover,
+html[data-theme="dark"] .theme-toggle:focus-visible { background: #424242; }
+html[data-theme="dark"] .notebook-picker { color: rgba(255, 255, 255, .87); background: #212121; border-color: #616161; }
 html[data-theme="dark"] .tool-button { color: #ddd; }
 html[data-theme="dark"] .tool-button:disabled { color: #666; }
 html[data-theme="dark"] .toolbar-divider { background: #555; }
-html[data-theme="dark"] .kernel-dot { border-color: #aaa; }
 html[data-theme="dark"] .notebook-canvas { background: #424242; }
 html[data-theme="dark"] .notebook-sheet { background: #111; border-color: #616161; box-shadow: 0 3px 9px #0009; }
 html[data-theme="dark"] .cell-filename { color: #aaa; }
@@ -275,8 +276,6 @@ html[data-theme="dark"] .prompt { color: #bdbdbd; }
 html[data-theme="dark"] .code-content { color: #e0e0e0; background: #212121; border-color: #424242; }
 html[data-theme="dark"] .empty-state h1 { color: #eee; }
 html[data-theme="dark"] .empty-state p { color: #bdbdbd; }
-html[data-theme="dark"] .empty-add-button { color: #eee; background: #212121; border-color: #616161; }
-html[data-theme="dark"] .empty-add-button:hover,
 html[data-theme="dark"] .add-cell-row button:hover { background: #323232; }
 html[data-theme="dark"] .add-cell-row > span { background: #424242; }
 
@@ -286,9 +285,9 @@ html[data-theme="dark"] .add-cell-row > span { background: #424242; }
     .brand-mark { width: 19px; height: 19px; }
     .doc-title { font-size: 14px; }
     .checkpoint { display: none; }
-    .menubar { overflow-x: auto; padding: 0 5px; }
     .toolbar { gap: 4px; padding: 0 7px; }
-    .kernel-status { gap: 4px; font-size: 10px; }
+    .notebook-picker-label { display: none; }
+    .notebook-picker { max-width: min(190px, 48vw); font-size: 11px; }
     .connection-status { display: none; }
     .notebook-canvas { min-height: calc(100vh - 106px); padding: 12px 8px 32px; }
     .notebook-sheet { padding: 11px 5px; }
@@ -336,7 +335,6 @@ body { background: var(--jp-layout-color2, #eee); color: var(--ink); }
 .notebook { width: min(100%, 1200px); min-height: 100%; padding: 0 32px 34px; background: #fff; box-shadow: 0 0 12px 1px rgba(0, 0, 0, .12); }
 .notebook-toolbar { height: 37px; color: #424242; border-bottom-color: #e0e0e0; font: 13px var(--sans); letter-spacing: 0; }
 .kernel-label { display: flex; align-items: center; gap: 7px; }
-.kernel-dot { width: 8px; height: 8px; border: 1px solid #757575; border-radius: 50%; }
 .toolbar-divider { height: 14px; border-left: 1px solid #bdbdbd; }
 .readonly-label, .cell-total { color: #616161; font-size: 11px; }
 .notebook-heading { align-items: center; padding: 17px 0 13px; border-bottom: 1px solid #e0e0e0; }
@@ -372,4 +370,58 @@ h1 { font-size: 18px; font-weight: 400; }
     .prompt { flex-basis: 55px; font-size: 11px; }
     .cell-filename { font-size: 10px; }
     .statusbar { font-size: 8px; }
+}
+
+/* Compact Classic Notebook header matching the Jupyter toolbar layout. */
+.topbar { height: 38px; flex-basis: 38px; gap: 24px; padding: 0 max(10px, calc((100% - 1150px) / 2)); }
+.brand { gap: 5px; font-size: 18px; }
+.brand-mark { width: 22px; height: 22px; }
+.doc-title { gap: 7px; margin-left: 0; font-size: 18px; }
+.checkpoint { font-size: 12px; }
+.topbar-actions { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.theme-toggle { width: 23px; height: 23px; flex-basis: 23px; margin-left: 0; border-color: transparent; }
+
+.menubar { height: 28px; flex: 0 0 28px; display: flex; align-items: stretch; gap: 0; padding: 0 max(10px, calc((100% - 1150px) / 2)); background: #fff; border-bottom: 1px solid #bdbdbd; }
+.menu-item { min-height: 27px; padding: 0 8px; color: #222; background: transparent; border: 0; border-radius: 0; cursor: pointer; font: 13px Arial, sans-serif; }
+.menu-item:hover, .menu-item:focus-visible { background: #e8e8e8; outline: 0; }
+.toolbar { height: 32px; flex: 0 0 32px; gap: 8px; padding: 0 max(10px, calc((100% - 1150px) / 2)); box-shadow: 0 1px 2px #00000012; }
+.toolbar-actions { gap: 1px; }
+.tool-button { width: 24px; height: 25px; color: #555; font-size: 15px; }
+.tool-button:hover:not(:disabled) { color: #111; background: #e8e8e8; }
+.toolbar-divider { height: 16px; margin: 0 7px 0 3px; background: transparent; border-left: 1px solid #ccc; }
+.cell-type-picker { width: 92px; height: 25px; padding: 0 4px; color: #333; background: transparent; border: 0; font: 13px Arial, sans-serif; }
+.toolbar-spacer { flex: 1; }
+.toolbar-link { display: inline-flex; align-items: center; gap: 4px; padding: 0; color: #333; background: transparent; border: 0; cursor: pointer; font: 13px Arial, sans-serif; text-decoration: none; }
+.settings-button { margin: 0 4px; color: #777; font-size: 14px; }
+.notebook-picker { width: auto; max-width: min(240px, 25vw); height: 25px; padding: 0 3px; color: #333; background: transparent; border: 0; font: 13px Arial, sans-serif; }
+.kernel-dot { width: 14px; height: 14px; flex: 0 0 14px; border: 1.5px solid #666; border-radius: 50%; }
+.notebook-canvas { min-height: calc(100vh - 98px); padding: 20px 18px 48px; }
+.notebook-sheet { width: min(100%, 1200px); padding: 14px 10px 18px; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; clip-path: inset(50%); }
+
+html[data-theme="dark"] .menubar { background: #212121; border-color: #424242; }
+html[data-theme="dark"] .menu-item,
+html[data-theme="dark"] .toolbar-link,
+html[data-theme="dark"] .cell-type-picker,
+html[data-theme="dark"] .notebook-picker { color: rgba(255, 255, 255, .87); }
+html[data-theme="dark"] .menu-item:hover,
+html[data-theme="dark"] .menu-item:focus-visible,
+html[data-theme="dark"] .tool-button:hover:not(:disabled) { background: #424242; }
+html[data-theme="dark"] .kernel-dot { border-color: #aaa; }
+
+@media (max-width: 620px) {
+    .topbar { gap: 9px; padding-right: 8px; padding-left: 8px; }
+    .brand { font-size: 15px; }
+    .doc-title { font-size: 15px; }
+    .checkpoint { display: none; }
+    .menubar { padding: 0 5px; }
+    .menu-item { padding: 0 7px; font-size: 12px; }
+    .toolbar { gap: 3px; padding: 0 6px; }
+    .toolbar-actions { gap: 0; }
+    .tool-button { width: 22px; }
+    .toolbar-link { display: none; }
+    .settings-button { display: none; }
+    .notebook-picker { max-width: 31vw; font-size: 11px; }
+    .cell-type-picker { width: 75px; font-size: 12px; }
+    .notebook-canvas { min-height: calc(100vh - 98px); }
 }

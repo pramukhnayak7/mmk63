@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Serve read-only notebook-style code snippets from text files."""
 
+import json
 import re
 import uuid
 from pathlib import Path
@@ -20,6 +21,30 @@ def index():
 
 @app.route("/api/notebook")
 def get_notebook():
+    name = request.args.get("name", "")
+    if name == "snippets":
+        return jsonify(_get_snippets_notebook())
+
+    if not name or Path(name).name != name or not name.lower().endswith(".ipynb"):
+        return jsonify({"error": "Choose a notebook from the available list."}), 400
+
+    notebook_path = Path(__file__).parent / name
+    if not notebook_path.is_file():
+        return jsonify({"error": "Notebook not found."}), 404
+
+    try:
+        notebook = json.loads(notebook_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return jsonify({"error": "Could not read this notebook."}), 400
+
+    if not isinstance(notebook, dict) or not isinstance(notebook.get("cells"), list):
+        return jsonify({"error": "This file is not a valid notebook."}), 400
+
+    notebook["name"] = name
+    return jsonify(notebook)
+
+
+def _get_snippets_notebook():
     cells = []
     for txt_file in sorted(CODE_DIR.glob("*.txt"), key=lambda file: file.name.lower()):
         content = txt_file.read_text(encoding="utf-8", errors="replace")
@@ -35,7 +60,8 @@ def get_notebook():
             "source": content.splitlines(keepends=True),
         })
 
-    return jsonify({
+    return {
+        "name": "Code snippets",
         "cells": cells,
         "metadata": {
             "kernelspec": {"display_name": "Python 3", "language": "python", "name": "python3"},
@@ -43,7 +69,20 @@ def get_notebook():
         },
         "nbformat": 4,
         "nbformat_minor": 5,
-    })
+    }
+
+
+@app.route("/api/notebooks")
+def list_notebooks():
+    workspace = Path(__file__).parent
+    notebooks = [
+        {"name": file.name, "kind": "notebook"}
+        for file in sorted(workspace.glob("*.ipynb"), key=lambda file: file.name.lower())
+        if file.is_file()
+    ]
+    if any(CODE_DIR.glob("*.txt")):
+        notebooks.append({"name": "Code snippets", "kind": "snippets", "value": "snippets"})
+    return jsonify(notebooks)
 
 
 @app.route("/api/files", methods=["GET", "POST"])
